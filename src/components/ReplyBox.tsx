@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Send, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export function ReplyBox({
   conversationId,
@@ -57,39 +59,37 @@ export function ReplyBox({
   }
 
   return (
-    <form onSubmit={handleSend} className="border-t border-slate-200 bg-white p-3">
+    <form onSubmit={handleSend} className="border-t border-stone-200 bg-white p-3">
       {!whatsappConfigured && (
-        <p className="mb-2 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
+        <p className="mb-2 rounded-lg bg-amber-50 px-3 py-1.5 text-xs text-amber-700">
           WhatsApp credentials aren&apos;t configured yet — replies will be saved but not
           delivered until you set WHATSAPP_ACCESS_TOKEN / WHATSAPP_PHONE_NUMBER_ID.
         </p>
       )}
-      {error && <p className="mb-2 text-xs text-red-600">{error}</p>}
+      {error && <p className="mb-2 text-xs text-rose-600">{error}</p>}
       <div className="flex gap-2">
         <input
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Type a reply..."
-          className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="flex-1 rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
         />
         {aiConfigured && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={handleSuggest}
             disabled={drafting}
             title="Draft a reply with AI — review before sending"
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
-            {drafting ? "Drafting..." : "✨ Suggest"}
-          </button>
+            <Sparkles size={15} className="text-amber-500" />
+            {drafting ? "Drafting..." : "Suggest"}
+          </Button>
         )}
-        <button
-          type="submit"
-          disabled={sending || !body.trim()}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={sending || !body.trim()}>
+          <Send size={15} />
           {sending ? "Sending..." : "Send"}
-        </button>
+        </Button>
       </div>
     </form>
   );

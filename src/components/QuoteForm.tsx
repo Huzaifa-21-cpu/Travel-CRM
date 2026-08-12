@@ -99,8 +99,8 @@ export function QuoteForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-5">
-      {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+      {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
 
       <div className="space-y-2">
         {items.map((item, idx) => (
@@ -109,12 +109,12 @@ export function QuoteForm({
               placeholder="Description (e.g. Round-trip flight)"
               value={item.description}
               onChange={(e) => updateItem(idx, { description: e.target.value })}
-              className="col-span-5 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              className="col-span-5 rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <select
               value={item.category}
               onChange={(e) => updateItem(idx, { category: e.target.value as Item["category"] })}
-              className="col-span-3 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              className="col-span-3 rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             >
               {QUOTATION_ITEM_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -128,7 +128,7 @@ export function QuoteForm({
               placeholder="Qty"
               value={item.quantity}
               onChange={(e) => updateItem(idx, { quantity: e.target.value })}
-              className="col-span-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              className="col-span-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <input
               type="number"
@@ -137,12 +137,12 @@ export function QuoteForm({
               placeholder="Unit price"
               value={item.unitPrice}
               onChange={(e) => updateItem(idx, { unitPrice: e.target.value })}
-              className="col-span-2 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+              className="col-span-2 rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <button
               type="button"
               onClick={() => setItems((cur) => cur.filter((_, i) => i !== idx))}
-              className="col-span-1 text-xs text-slate-400 hover:text-red-600"
+              className="col-span-1 text-xs text-stone-400 hover:text-rose-600"
             >
               ✕
             </button>
@@ -151,7 +151,7 @@ export function QuoteForm({
         <button
           type="button"
           onClick={() => setItems((cur) => [...cur, emptyItem()])}
-          className="text-xs font-medium text-slate-600 hover:underline"
+          className="text-xs font-medium text-stone-600 hover:underline"
         >
           + Add item
         </button>
@@ -159,15 +159,15 @@ export function QuoteForm({
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Currency</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Currency</label>
           <input
             value={currency}
             onChange={(e) => setCurrency(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Tax rate (0-1)</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Tax rate (0-1)</label>
           <input
             type="number"
             min={0}
@@ -175,34 +175,34 @@ export function QuoteForm({
             step="0.01"
             value={taxRate}
             onChange={(e) => setTaxRate(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Valid until</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Valid until</label>
           <input
             type="date"
             value={validUntil}
             onChange={(e) => setValidUntil(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-2 py-1.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
       </div>
 
-      <div className="rounded-md bg-slate-50 p-3 text-sm">
-        <div className="flex justify-between text-slate-600">
+      <div className="rounded-md bg-stone-50 p-3 text-sm">
+        <div className="flex justify-between text-stone-600">
           <span>Subtotal</span>
           <span>
             {currency} {subtotal.toLocaleString()}
           </span>
         </div>
-        <div className="flex justify-between text-slate-600">
+        <div className="flex justify-between text-stone-600">
           <span>Tax</span>
           <span>
             {currency} {tax.toLocaleString()}
           </span>
         </div>
-        <div className="mt-1 flex justify-between border-t border-slate-200 pt-1 font-semibold text-slate-900">
+        <div className="mt-1 flex justify-between border-t border-stone-200 pt-1 font-semibold text-stone-900">
           <span>Total</span>
           <span>
             {currency} {total.toLocaleString()}
@@ -211,7 +211,7 @@ export function QuoteForm({
       </div>
 
       {conversationId && (
-        <label className="flex items-center gap-2 text-xs text-slate-600">
+        <label className="flex items-center gap-2 text-xs text-stone-600">
           <input
             type="checkbox"
             checked={sendAfterCreate}
@@ -224,7 +224,7 @@ export function QuoteForm({
       <button
         type="submit"
         disabled={saving || items.every((i) => !i.description)}
-        className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+        className="w-full rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-800 disabled:opacity-50"
       >
         {saving ? "Saving..." : "Create quotation"}
       </button>

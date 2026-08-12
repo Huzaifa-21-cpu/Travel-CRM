@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-screen w-full">
       <Sidebar agentName={session.name} agencyName={agency?.name ?? "Agency"} />
-      <main className="flex-1 overflow-y-auto bg-slate-50">{children}</main>
+      <main className="flex-1 overflow-y-auto bg-stone-50">{children}</main>
     </div>
   );
 }

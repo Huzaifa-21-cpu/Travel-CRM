@@ -23,13 +23,13 @@ export default async function CustomerDetailPage(props: PageProps<"/customers/[i
     <div className="mx-auto max-w-2xl space-y-5 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">{customer.name}</h1>
-          <p className="text-xs text-slate-500">{customer.phone}</p>
+          <h1 className="text-lg font-semibold text-stone-900">{customer.name}</h1>
+          <p className="text-xs text-stone-500">{customer.phone}</p>
         </div>
         {customer.conversations[0] && (
           <Link
             href={`/inbox/${customer.conversations[0].id}`}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50"
           >
             View WhatsApp thread
           </Link>
@@ -49,31 +49,31 @@ export default async function CustomerDetailPage(props: PageProps<"/customers/[i
         }}
       />
 
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-2 text-sm font-semibold text-slate-900">Leads</h2>
-        {customer.leads.length === 0 && <p className="text-xs text-slate-400">No leads yet.</p>}
+      <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-2 text-sm font-semibold text-stone-900">Leads</h2>
+        {customer.leads.length === 0 && <p className="text-xs text-stone-400">No leads yet.</p>}
         <ul className="space-y-1.5">
           {customer.leads.map((l) => (
             <li key={l.id} className="flex items-center justify-between text-sm">
-              <Link href={`/leads/${l.id}`} className="text-slate-900 hover:underline">
+              <Link href={`/leads/${l.id}`} className="text-stone-900 hover:underline">
                 {l.title}
               </Link>
-              <span className="text-xs text-slate-400">{l.stage}</span>
+              <span className="text-xs text-stone-400">{l.stage}</span>
             </li>
           ))}
         </ul>
       </div>
 
       {customer.bookings.length > 0 && (
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-2 text-sm font-semibold text-slate-900">Bookings</h2>
+        <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-2 text-sm font-semibold text-stone-900">Bookings</h2>
           <ul className="space-y-1.5">
             {customer.bookings.map((b) => (
               <li key={b.id} className="flex items-center justify-between text-sm">
-                <Link href={`/bookings/${b.id}`} className="text-slate-900 hover:underline">
+                <Link href={`/bookings/${b.id}`} className="text-stone-900 hover:underline">
                   {b.bookingRef}
                 </Link>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-stone-400">
                   {b.status} · ${b.totalAmount.toLocaleString()}
                 </span>
               </li>

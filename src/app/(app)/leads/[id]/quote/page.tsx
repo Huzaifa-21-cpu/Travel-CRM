@@ -16,12 +16,12 @@ export default async function NewQuotePage(props: PageProps<"/leads/[id]/quote">
 
   return (
     <div className="mx-auto max-w-2xl p-6">
-      <p className="mb-1 text-xs text-slate-500">
+      <p className="mb-1 text-xs text-stone-500">
         <Link href={`/leads/${lead.id}`} className="hover:underline">
           {lead.title}
         </Link>
       </p>
-      <h1 className="mb-4 text-lg font-semibold text-slate-900">
+      <h1 className="mb-4 text-lg font-semibold text-stone-900">
         New quotation for {lead.customer.name}
       </h1>
       <QuoteForm

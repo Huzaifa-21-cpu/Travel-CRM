@@ -31,12 +31,12 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
     <div className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">Customers</h1>
-          <p className="text-xs text-slate-500">{customers.length} total</p>
+          <h1 className="text-lg font-semibold text-stone-900">Customers</h1>
+          <p className="text-xs text-stone-500">{customers.length} total</p>
         </div>
         <Link
           href="/customers/new"
-          className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800"
+          className="rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-teal-800"
         >
           + New customer
         </Link>
@@ -48,13 +48,13 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
           name="q"
           defaultValue={query}
           placeholder="Search by name, phone, or email..."
-          className="w-80 rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="w-80 rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
         />
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+          <thead className="bg-stone-50 text-xs uppercase text-stone-500">
             <tr>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Phone</th>
@@ -62,22 +62,22 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
               <th className="px-4 py-2">Visa expiry</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-stone-100">
             {customers.map((c) => {
               const passportSoon = c.passportExpiry && c.passportExpiry <= cutoff;
               const visaSoon = c.visaExpiry && c.visaExpiry <= cutoff;
               return (
-                <tr key={c.id} className="hover:bg-slate-50">
+                <tr key={c.id} className="hover:bg-stone-50">
                   <td className="px-4 py-2.5">
-                    <Link href={`/customers/${c.id}`} className="font-medium text-slate-900 hover:underline">
+                    <Link href={`/customers/${c.id}`} className="font-medium text-stone-900 hover:underline">
                       {c.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-2.5 text-slate-600">{c.phone}</td>
-                  <td className={`px-4 py-2.5 ${passportSoon ? "font-medium text-red-600" : "text-slate-600"}`}>
+                  <td className="px-4 py-2.5 text-stone-600">{c.phone}</td>
+                  <td className={`px-4 py-2.5 ${passportSoon ? "font-medium text-rose-600" : "text-stone-600"}`}>
                     {c.passportExpiry ? c.passportExpiry.toDateString() : "—"}
                   </td>
-                  <td className={`px-4 py-2.5 ${visaSoon ? "font-medium text-red-600" : "text-slate-600"}`}>
+                  <td className={`px-4 py-2.5 ${visaSoon ? "font-medium text-rose-600" : "text-stone-600"}`}>
                     {c.visaExpiry ? c.visaExpiry.toDateString() : "—"}
                   </td>
                 </tr>
@@ -85,7 +85,7 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
             })}
             {customers.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-sm text-slate-400">
+                <td colSpan={4} className="px-4 py-6 text-center text-sm text-stone-400">
                   No customers found.
                 </td>
               </tr>

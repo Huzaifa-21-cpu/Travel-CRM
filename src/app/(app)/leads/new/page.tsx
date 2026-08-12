@@ -57,16 +57,16 @@ export default function NewLeadPage() {
 
   return (
     <div className="mx-auto max-w-lg p-6">
-      <h1 className="mb-4 text-lg font-semibold text-slate-900">New lead</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-5">
-        {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+      <h1 className="mb-4 text-lg font-semibold text-stone-900">New lead</h1>
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+        {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Customer</label>
+          <label className="mb-1 block text-sm font-medium text-stone-700">Customer</label>
           <select
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           >
             <option value="">— New customer —</option>
             {customers.map((c) => (
@@ -80,16 +80,16 @@ export default function NewLeadPage() {
         {!customerId && (
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Name</label>
+              <label className="mb-1 block text-sm font-medium text-stone-700">Name</label>
               <input
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required={!customerId}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-sm font-medium text-stone-700">
                 WhatsApp phone
               </label>
               <input
@@ -97,59 +97,59 @@ export default function NewLeadPage() {
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 required={!customerId}
                 placeholder="e.g. 14155551234"
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
               />
             </div>
           </div>
         )}
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Lead title</label>
+          <label className="mb-1 block text-sm font-medium text-stone-700">Lead title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
             placeholder="e.g. Family trip to Bali"
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Destination</label>
+            <label className="mb-1 block text-sm font-medium text-stone-700">Destination</label>
             <input
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Travel date</label>
+            <label className="mb-1 block text-sm font-medium text-stone-700">Travel date</label>
             <input
               type="date"
               value={travelDate}
               onChange={(e) => setTravelDate(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Pax</label>
+            <label className="mb-1 block text-sm font-medium text-stone-700">Pax</label>
             <input
               type="number"
               min={1}
               value={pax}
               onChange={(e) => setPax(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Budget (USD)</label>
+            <label className="mb-1 block text-sm font-medium text-stone-700">Budget (USD)</label>
             <input
               type="number"
               min={0}
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function NewLeadPage() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          className="w-full rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-800 disabled:opacity-50"
         >
           {saving ? "Creating..." : "Create lead"}
         </button>

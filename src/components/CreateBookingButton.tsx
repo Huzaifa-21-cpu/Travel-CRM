@@ -22,7 +22,7 @@ export function CreateBookingButton({ quotationId }: { quotationId: string }) {
     <button
       onClick={handleClick}
       disabled={saving}
-      className="rounded-md bg-emerald-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+      className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
     >
       {saving ? "Booking..." : "Confirm booking"}
     </button>

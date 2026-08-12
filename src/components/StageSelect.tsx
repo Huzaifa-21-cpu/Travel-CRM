@@ -26,7 +26,7 @@ export function StageSelect({ leadId, stage }: { leadId: string; stage: string }
         disabled={updating}
         onClick={(e) => e.stopPropagation()}
         onChange={handleChange}
-        className="w-full rounded border border-slate-200 bg-white px-1.5 py-1 text-[11px] text-slate-600 disabled:opacity-50"
+        className="w-full rounded-md border border-stone-200 bg-stone-50 px-1.5 py-1 text-[11px] text-stone-600 transition-colors hover:bg-white disabled:opacity-50"
       >
         {LEAD_STAGES.map((s) => (
           <option key={s} value={s}>

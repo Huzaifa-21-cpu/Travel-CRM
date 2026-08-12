@@ -40,73 +40,73 @@ export function CustomerDetailsForm({ customerId, initial }: Props) {
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+    <form onSubmit={handleSave} className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Name</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Name</label>
           <input
             value={form.name}
             onChange={(e) => set("name", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Email</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Email</label>
           <input
             value={form.email}
             onChange={(e) => set("email", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Passport number</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Passport number</label>
           <input
             value={form.passportNumber}
             onChange={(e) => set("passportNumber", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Passport expiry</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Passport expiry</label>
           <input
             type="date"
             value={form.passportExpiry}
             onChange={(e) => set("passportExpiry", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Visa country</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Visa country</label>
           <input
             value={form.visaCountry}
             onChange={(e) => set("visaCountry", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-slate-600">Visa expiry</label>
+          <label className="mb-1 block text-xs font-medium text-stone-600">Visa expiry</label>
           <input
             type="date"
             value={form.visaExpiry}
             onChange={(e) => set("visaExpiry", e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-slate-600">Notes</label>
+        <label className="mb-1 block text-xs font-medium text-stone-600">Notes</label>
         <textarea
           rows={3}
           value={form.notes}
           onChange={(e) => set("notes", e.target.value)}
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
         />
       </div>
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-800 disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save"}
         </button>

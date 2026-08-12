@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 export function FollowUpForm({ leadId }: { leadId: string }) {
   const router = useRouter();
@@ -27,31 +28,27 @@ export function FollowUpForm({ leadId }: { leadId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2">
       <div>
-        <label className="mb-1 block text-xs font-medium text-slate-600">Follow up on</label>
+        <label className="mb-1 block text-xs font-medium text-stone-600">Follow up on</label>
         <input
           type="datetime-local"
           value={dueAt}
           onChange={(e) => setDueAt(e.target.value)}
           required
-          className="rounded-md border border-slate-300 px-2 py-1.5 text-xs"
+          className="rounded-lg border border-stone-300 px-2 py-1.5 text-xs focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
         />
       </div>
       <div className="flex-1">
-        <label className="mb-1 block text-xs font-medium text-slate-600">Reminder note</label>
+        <label className="mb-1 block text-xs font-medium text-stone-600">Reminder note</label>
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="e.g. check if they confirmed flights"
-          className="w-full rounded-md border border-slate-300 px-2 py-1.5 text-xs"
+          className="w-full rounded-lg border border-stone-300 px-2 py-1.5 text-xs focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
         />
       </div>
-      <button
-        type="submit"
-        disabled={saving}
-        className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-      >
+      <Button type="submit" size="sm" disabled={saving}>
         {saving ? "Saving..." : "Schedule"}
-      </button>
+      </Button>
     </form>
   );
 }

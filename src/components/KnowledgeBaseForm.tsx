@@ -28,13 +28,13 @@ export function KnowledgeBaseForm({ initialValue }: { initialValue: string }) {
         placeholder={
           "e.g. We specialize in Southeast Asia and the Maldives. Standard visa processing takes 5-7 business days. Office hours are 9am-6pm GST, Sunday-Thursday. Deposits are 25% to confirm a booking..."
         }
-        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+        className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm transition-shadow focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
       />
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-800 disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save"}
         </button>
