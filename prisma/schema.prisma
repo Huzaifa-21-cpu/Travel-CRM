@@ -1,14 +1,14 @@
-// Local dev uses SQLite for zero-setup. Prisma enums aren't supported on SQLite,
-// so status/category fields are plain Strings — valid values are documented inline
-// and enforced in code (see src/lib/constants.ts). Switching to Postgres later is
-// just: change provider + DATABASE_URL, then optionally promote these to real enums.
+// Status/category fields are plain Strings rather than native Postgres enums —
+// valid values are documented inline and enforced in code (see src/lib/constants.ts).
+// This was originally built against SQLite for zero-setup local dev; the schema was
+// promoted to Postgres (Neon) for production. Kept as strings for schema stability.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
