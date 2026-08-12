@@ -34,3 +34,21 @@ export const STAGE_TONES: Record<string, BadgeTone> = {
   WON: "emerald",
   LOST: "rose",
 };
+
+export const URGENCY_TONES: Record<string, BadgeTone> = {
+  EXPIRED: "rose",
+  URGENT: "rose",
+  SOON: "orange",
+  UPCOMING: "amber",
+  PLAN_AHEAD: "sky",
+  OK: "stone",
+};
+
+export const URGENCY_DOTS: Record<string, string> = {
+  EXPIRED: "🔴",
+  URGENT: "🔴",
+  SOON: "🟠",
+  UPCOMING: "🟡",
+  PLAN_AHEAD: "🟢",
+  OK: "",
+};

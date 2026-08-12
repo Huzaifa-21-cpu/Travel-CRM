@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { format } from "date-fns";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { addDays } from "date-fns";
-import { EXPIRY_WARNING_DAYS } from "@/lib/constants";
+import { getExpiryUrgency } from "@/lib/reminders";
+import { Badge, URGENCY_TONES, URGENCY_DOTS } from "@/components/ui/Badge";
 
 export default async function CustomersPage(props: PageProps<"/customers">) {
   const { q } = await props.searchParams;
@@ -24,8 +25,6 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
     },
     orderBy: { name: "asc" },
   });
-
-  const cutoff = addDays(new Date(), EXPIRY_WARNING_DAYS);
 
   return (
     <div className="p-6">
@@ -64,21 +63,41 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
           </thead>
           <tbody className="divide-y divide-stone-100">
             {customers.map((c) => {
-              const passportSoon = c.passportExpiry && c.passportExpiry <= cutoff;
-              const visaSoon = c.visaExpiry && c.visaExpiry <= cutoff;
+              const passportUrgency = c.passportExpiry ? getExpiryUrgency(c.passportExpiry) : null;
+              const visaUrgency = c.visaExpiry ? getExpiryUrgency(c.visaExpiry) : null;
               return (
                 <tr key={c.id} className="hover:bg-stone-50">
                   <td className="px-4 py-2.5">
-                    <Link href={`/customers/${c.id}`} className="font-medium text-stone-900 hover:underline">
+                    <Link href={`/customers/${c.id}`} className="font-medium text-stone-900 hover:text-teal-700 hover:underline">
                       {c.name}
                     </Link>
                   </td>
                   <td className="px-4 py-2.5 text-stone-600">{c.phone}</td>
-                  <td className={`px-4 py-2.5 ${passportSoon ? "font-medium text-rose-600" : "text-stone-600"}`}>
-                    {c.passportExpiry ? c.passportExpiry.toDateString() : "—"}
+                  <td className="px-4 py-2.5">
+                    {c.passportExpiry ? (
+                      passportUrgency && passportUrgency !== "OK" ? (
+                        <Badge tone={URGENCY_TONES[passportUrgency]}>
+                          {URGENCY_DOTS[passportUrgency]} {format(c.passportExpiry, "MMM d, yyyy")}
+                        </Badge>
+                      ) : (
+                        <span className="text-stone-600">{format(c.passportExpiry, "MMM d, yyyy")}</span>
+                      )
+                    ) : (
+                      "—"
+                    )}
                   </td>
-                  <td className={`px-4 py-2.5 ${visaSoon ? "font-medium text-rose-600" : "text-stone-600"}`}>
-                    {c.visaExpiry ? c.visaExpiry.toDateString() : "—"}
+                  <td className="px-4 py-2.5">
+                    {c.visaExpiry ? (
+                      visaUrgency && visaUrgency !== "OK" ? (
+                        <Badge tone={URGENCY_TONES[visaUrgency]}>
+                          {URGENCY_DOTS[visaUrgency]} {format(c.visaExpiry, "MMM d, yyyy")}
+                        </Badge>
+                      ) : (
+                        <span className="text-stone-600">{format(c.visaExpiry, "MMM d, yyyy")}</span>
+                      )
+                    ) : (
+                      "—"
+                    )}
                   </td>
                 </tr>
               );

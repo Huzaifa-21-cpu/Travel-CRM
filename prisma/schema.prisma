@@ -72,8 +72,37 @@ model Customer {
   conversations Conversation[]
   leads         Lead[]
   bookings      Booking[]
+  documents     Document[]
+  familyMembers FamilyMember[]
 
   @@unique([agencyId, phone])
+}
+
+/// type: PASSPORT | VISA | EMIRATES_ID | NATIONAL_ID | INSURANCE | PHOTO | OTHER
+model Document {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  type       String
+  fileName   String
+  fileUrl    String
+  uploadedAt DateTime @default(now())
+
+  @@index([customerId])
+}
+
+model FamilyMember {
+  id             String    @id @default(cuid())
+  customerId     String
+  customer       Customer  @relation(fields: [customerId], references: [id])
+  name           String
+  relationship   String?
+  dob            DateTime?
+  passportNumber String?
+  passportExpiry DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([customerId])
 }
 
 /// status: OPEN | CLOSED
@@ -141,21 +170,23 @@ model Lead {
   @@index([agencyId, stage])
 }
 
-/// status: DRAFT | SENT | ACCEPTED | REJECTED | EXPIRED
+/// status: DRAFT | SENT | VIEWED | NEGOTIATING | ACCEPTED | REJECTED | EXPIRED
 model Quotation {
-  id         String   @id @default(cuid())
-  leadId     String
-  lead       Lead     @relation(fields: [leadId], references: [id])
-  agentId    String?
-  agent      User?    @relation(fields: [agentId], references: [id])
-  version    Int      @default(1)
-  currency   String   @default("USD")
-  subtotal   Float    @default(0)
-  tax        Float    @default(0)
-  total      Float    @default(0)
-  status     String   @default("DRAFT")
-  validUntil DateTime?
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id])
+  agentId     String?
+  agent       User?    @relation(fields: [agentId], references: [id])
+  version     Int      @default(1)
+  currency    String   @default("USD")
+  subtotal    Float    @default(0)
+  tax         Float    @default(0)
+  total       Float    @default(0)
+  // What this itinerary costs the agency — lets the UI show margin (total - agencyCost).
+  agencyCost  Float?
+  status      String   @default("DRAFT")
+  validUntil  DateTime?
+  createdAt   DateTime @default(now())
 
   items    QuotationItem[]
   bookings Booking[]
