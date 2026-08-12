@@ -65,19 +65,20 @@ export const FOLLOW_UP_TYPES = [
 
 export const FOLLOW_UP_STATUSES = ["PENDING", "SENT", "DONE", "CANCELLED"] as const;
 
-// Documents/leads expiring within this window surface as reminders.
-export const EXPIRY_WARNING_DAYS = 180;
+// Documents/leads expiring within this window surface as reminders. Alerts
+// only start inside this window — anything further out is just a plain date,
+// no badge — and the count ticks down automatically since it's recomputed
+// from today() on every load, not stored.
+export const EXPIRY_WARNING_DAYS = 7;
 // Leads with no activity for this long surface as stale-follow-up reminders.
 export const STALE_LEAD_DAYS = 3;
 
-// Staged urgency thresholds (days-until-expiry) for passport/visa reminders,
-// checked in order — first match wins.
+// Staged urgency thresholds (days-until-expiry) for passport/visa alerts,
+// checked in order — first match wins. Nothing before EXPIRY_WARNING_DAYS.
 export const EXPIRY_URGENCY_TIERS = [
   { maxDays: 0, key: "EXPIRED", label: "Expired" },
   { maxDays: 3, key: "URGENT", label: "3 days" },
-  { maxDays: 7, key: "SOON", label: "7 days" },
-  { maxDays: 15, key: "UPCOMING", label: "15 days" },
-  { maxDays: 30, key: "PLAN_AHEAD", label: "30 days" },
+  { maxDays: EXPIRY_WARNING_DAYS, key: "SOON", label: "7 days" },
 ] as const;
 export type ExpiryUrgency = (typeof EXPIRY_URGENCY_TIERS)[number]["key"] | "OK";
 

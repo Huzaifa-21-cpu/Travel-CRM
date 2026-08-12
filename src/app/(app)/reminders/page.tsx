@@ -2,7 +2,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { Flame } from "lucide-react";
 import { requireUser } from "@/lib/auth";
-import { getExpiringDocuments, getStaleLeads, getDueFollowUps } from "@/lib/reminders";
+import { getExpiringDocuments, getStaleLeads, getDueFollowUps, formatDaysUntil } from "@/lib/reminders";
 import { Badge, URGENCY_TONES, URGENCY_DOTS } from "@/components/ui/Badge";
 
 export default async function RemindersPage() {
@@ -44,9 +44,12 @@ export default async function RemindersPage() {
       </section>
 
       <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-        <h2 className="mb-2 text-sm font-semibold text-stone-900">Passport &amp; visa expiry</h2>
+        <h2 className="mb-2 text-sm font-semibold text-stone-900">Passport &amp; visa alerts</h2>
+        <p className="mb-3 text-xs text-stone-400">
+          Alerts start automatically once a document is within 7 days of expiring.
+        </p>
         {expiring.length === 0 && (
-          <p className="text-xs text-stone-400">No documents expiring in the next 6 months.</p>
+          <p className="text-xs text-stone-400">Nothing expiring within 7 days.</p>
         )}
         <ul className="space-y-2.5">
           {expiring.map(({ customer, passportExpiring, visaExpiring, passportUrgency, visaUrgency }) => (
@@ -57,12 +60,12 @@ export default async function RemindersPage() {
               <div className="flex items-center gap-2">
                 {passportExpiring && customer.passportExpiry && passportUrgency && (
                   <Badge tone={URGENCY_TONES[passportUrgency]}>
-                    {URGENCY_DOTS[passportUrgency]} Passport {format(customer.passportExpiry, "MMM d")}
+                    {URGENCY_DOTS[passportUrgency]} Passport — {formatDaysUntil(customer.passportExpiry)}
                   </Badge>
                 )}
                 {visaExpiring && customer.visaExpiry && visaUrgency && (
                   <Badge tone={URGENCY_TONES[visaUrgency]}>
-                    {URGENCY_DOTS[visaUrgency]} Visa {format(customer.visaExpiry, "MMM d")}
+                    {URGENCY_DOTS[visaUrgency]} Visa — {formatDaysUntil(customer.visaExpiry)}
                   </Badge>
                 )}
               </div>

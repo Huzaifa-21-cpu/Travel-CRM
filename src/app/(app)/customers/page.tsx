@@ -2,7 +2,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getExpiryUrgency } from "@/lib/reminders";
+import { getExpiryUrgency, formatDaysUntil } from "@/lib/reminders";
 import { Badge, URGENCY_TONES, URGENCY_DOTS } from "@/components/ui/Badge";
 
 export default async function CustomersPage(props: PageProps<"/customers">) {
@@ -77,7 +77,7 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
                     {c.passportExpiry ? (
                       passportUrgency && passportUrgency !== "OK" ? (
                         <Badge tone={URGENCY_TONES[passportUrgency]}>
-                          {URGENCY_DOTS[passportUrgency]} {format(c.passportExpiry, "MMM d, yyyy")}
+                          {URGENCY_DOTS[passportUrgency]} {formatDaysUntil(c.passportExpiry)}
                         </Badge>
                       ) : (
                         <span className="text-stone-600">{format(c.passportExpiry, "MMM d, yyyy")}</span>
@@ -90,7 +90,7 @@ export default async function CustomersPage(props: PageProps<"/customers">) {
                     {c.visaExpiry ? (
                       visaUrgency && visaUrgency !== "OK" ? (
                         <Badge tone={URGENCY_TONES[visaUrgency]}>
-                          {URGENCY_DOTS[visaUrgency]} {format(c.visaExpiry, "MMM d, yyyy")}
+                          {URGENCY_DOTS[visaUrgency]} {formatDaysUntil(c.visaExpiry)}
                         </Badge>
                       ) : (
                         <span className="text-stone-600">{format(c.visaExpiry, "MMM d, yyyy")}</span>
