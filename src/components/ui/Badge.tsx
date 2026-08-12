@@ -35,6 +35,14 @@ export const STAGE_TONES: Record<string, BadgeTone> = {
   LOST: "rose",
 };
 
+export const CONVERSATION_STATUS_TONES: Record<string, BadgeTone> = {
+  NEW_ENQUIRY: "sky",
+  AWAITING_CUSTOMER: "violet",
+  QUOTATION_SENT: "amber",
+  PAYMENT_PENDING: "orange",
+  BOOKING_CONFIRMED: "emerald",
+};
+
 export const URGENCY_TONES: Record<string, BadgeTone> = {
   EXPIRED: "rose",
   URGENT: "rose",

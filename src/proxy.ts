@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const SESSION_COOKIE = "travelcrm_session";
-const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/webhooks/whatsapp"];
+// /q/ is the customer-facing shareable quote link — unguessable cuid, no login.
+const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/webhooks/whatsapp", "/q"];
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;

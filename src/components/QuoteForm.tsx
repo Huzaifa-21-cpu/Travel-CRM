@@ -45,15 +45,17 @@ export function QuoteForm({
   const total = subtotal + tax;
   const margin = agencyCost ? total - Number(agencyCost) : null;
 
-  function buildSummaryText(quotationTotal: number) {
+  function buildSummaryText(quotationTotal: number, quotationId: string) {
     const lines = items
       .filter((i) => i.description)
       .map((i) => `• ${i.description} x${i.quantity} — ${currency} ${(Number(i.quantity) * Number(i.unitPrice)).toLocaleString()}`);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
     return [
       `Hi ${customerName}, here's your quote:`,
       ...lines,
       `Total: ${currency} ${quotationTotal.toLocaleString()}`,
       validUntil ? `Valid until ${validUntil}` : null,
+      appUrl ? `View full quote: ${appUrl}/q/${quotationId}` : null,
     ]
       .filter(Boolean)
       .join("\n");
@@ -98,7 +100,7 @@ export function QuoteForm({
       await fetch(`/api/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ body: buildSummaryText(quotation.total) }),
+        body: JSON.stringify({ body: buildSummaryText(quotation.total, quotation.id) }),
       });
     }
 

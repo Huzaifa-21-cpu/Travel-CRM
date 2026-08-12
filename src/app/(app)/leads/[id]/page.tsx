@@ -109,6 +109,15 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                <a
+                  href={`/q/${q.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-teal-700 hover:underline"
+                  title="Open the customer-facing quote link"
+                >
+                  Link
+                </a>
                 <QuotationStatusSelect quotationId={q.id} status={q.status} />
                 {!bookedQuotationIds.has(q.id) && lead.stage !== "WON" && (
                   <CreateBookingButton quotationId={q.id} />
