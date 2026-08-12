@@ -1,0 +1,226 @@
+// Local dev uses SQLite for zero-setup. Prisma enums aren't supported on SQLite,
+// so status/category fields are plain Strings — valid values are documented inline
+// and enforced in code (see src/lib/constants.ts). Switching to Postgres later is
+// just: change provider + DATABASE_URL, then optionally promote these to real enums.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Agency {
+  id                     String   @id @default(cuid())
+  name                   String
+  // Meta phone_number_id this agency's WhatsApp Business number is registered under.
+  // Used to route inbound webhook events to the right agency in multi-tenant deployments.
+  whatsappPhoneNumberId  String?  @unique
+  // Free-text info (destinations offered, policies, office hours, visa turnaround, etc.)
+  // fed to the AI reply-suggestion feature so drafts reflect this agency's own business.
+  aiKnowledgeBase        String?
+  createdAt              DateTime @default(now())
+
+  // Billing (Stripe)
+  plan                 String    @default("TRIAL")
+  subscriptionStatus   String    @default("trialing")
+  trialEndsAt          DateTime?
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  currentPeriodEnd     DateTime?
+
+  users      User[]
+  customers  Customer[]
+  leads      Lead[]
+  bookings   Booking[]
+}
+
+/// role: OWNER | AGENT
+model User {
+  id           String   @id @default(cuid())
+  agencyId     String
+  agency       Agency   @relation(fields: [agencyId], references: [id])
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("AGENT")
+  createdAt    DateTime @default(now())
+
+  assignedLeads     Lead[]         @relation("LeadAgent")
+  assignedConvos    Conversation[] @relation("ConversationAgent")
+  quotations        Quotation[]
+  followUps         FollowUp[]
+}
+
+model Customer {
+  id              String    @id @default(cuid())
+  agencyId        String
+  agency          Agency    @relation(fields: [agencyId], references: [id])
+  name            String
+  phone           String
+  email           String?
+  passportNumber  String?
+  passportExpiry  DateTime?
+  visaCountry     String?
+  visaExpiry      DateTime?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  conversations Conversation[]
+  leads         Lead[]
+  bookings      Booking[]
+
+  @@unique([agencyId, phone])
+}
+
+/// status: OPEN | CLOSED
+model Conversation {
+  id            String    @id @default(cuid())
+  agencyId      String
+  customerId    String
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  assignedAgentId String?
+  assignedAgent   User?   @relation("ConversationAgent", fields: [assignedAgentId], references: [id])
+  status        String    @default("OPEN")
+  lastMessageAt DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+
+  messages Message[]
+  leads    Lead[]
+
+  @@index([agencyId])
+}
+
+/// direction: INBOUND | OUTBOUND
+/// senderType: CUSTOMER | AGENT | AI | SYSTEM
+/// status: SENT | DELIVERED | READ | FAILED
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  direction      String
+  senderType     String
+  waMessageId    String?
+  body           String
+  mediaUrl       String?
+  status         String       @default("SENT")
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+/// stage: NEW | QUALIFIED | QUOTED | NEGOTIATION | WON | LOST
+model Lead {
+  id             String        @id @default(cuid())
+  agencyId       String
+  agency         Agency        @relation(fields: [agencyId], references: [id])
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  agentId        String?
+  agent          User?         @relation("LeadAgent", fields: [agentId], references: [id])
+  title          String
+  destination    String?
+  travelDate     DateTime?
+  pax            Int?          @default(1)
+  budget         Float?
+  stage          String        @default("NEW")
+  source         String        @default("WHATSAPP")
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  quotations Quotation[]
+  bookings   Booking[]
+  followUps  FollowUp[]
+
+  @@index([agencyId, stage])
+}
+
+/// status: DRAFT | SENT | ACCEPTED | REJECTED | EXPIRED
+model Quotation {
+  id         String   @id @default(cuid())
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id])
+  agentId    String?
+  agent      User?    @relation(fields: [agentId], references: [id])
+  version    Int      @default(1)
+  currency   String   @default("USD")
+  subtotal   Float    @default(0)
+  tax        Float    @default(0)
+  total      Float    @default(0)
+  status     String   @default("DRAFT")
+  validUntil DateTime?
+  createdAt  DateTime @default(now())
+
+  items    QuotationItem[]
+  bookings Booking[]
+}
+
+/// category: FLIGHT | HOTEL | VISA | TRANSPORT | ACTIVITY | OTHER
+model QuotationItem {
+  id          String    @id @default(cuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id])
+  description String
+  category    String    @default("OTHER")
+  quantity    Int       @default(1)
+  unitPrice   Float
+  amount      Float
+}
+
+/// status: PENDING | CONFIRMED | CANCELLED | COMPLETED
+model Booking {
+  id              String     @id @default(cuid())
+  agencyId        String
+  agency          Agency     @relation(fields: [agencyId], references: [id])
+  leadId          String
+  lead            Lead       @relation(fields: [leadId], references: [id])
+  quotationId     String?
+  quotation       Quotation? @relation(fields: [quotationId], references: [id])
+  customerId      String
+  customer        Customer   @relation(fields: [customerId], references: [id])
+  bookingRef      String     @unique
+  status          String     @default("PENDING")
+  travelStartDate DateTime?
+  travelEndDate   DateTime?
+  totalAmount     Float      @default(0)
+  createdAt       DateTime   @default(now())
+
+  payments Payment[]
+}
+
+/// method: CASH | BANK_TRANSFER | CARD | ONLINE
+/// status: PENDING | PAID | PARTIAL | REFUNDED
+model Payment {
+  id        String    @id @default(cuid())
+  bookingId String
+  booking   Booking   @relation(fields: [bookingId], references: [id])
+  amount    Float
+  currency  String    @default("USD")
+  method    String    @default("BANK_TRANSFER")
+  status    String    @default("PENDING")
+  paidAt    DateTime?
+  dueDate   DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+}
+
+/// type: FOLLOW_UP | PASSPORT_REMINDER | VISA_REMINDER
+/// status: PENDING | SENT | DONE | CANCELLED
+model FollowUp {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  agentId   String?
+  agent     User?    @relation(fields: [agentId], references: [id])
+  type      String   @default("FOLLOW_UP")
+  dueAt     DateTime
+  message   String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+}
