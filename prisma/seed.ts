@@ -92,7 +92,6 @@ async function main() {
       version: 1,
       currency: "USD",
       subtotal: 5400,
-      tax: 0,
       total: 5400,
       status: "SENT",
       items: {
@@ -139,7 +138,6 @@ async function main() {
       version: 1,
       currency: "USD",
       subtotal: 7500,
-      tax: 0,
       total: 7500,
       status: "ACCEPTED",
       items: {

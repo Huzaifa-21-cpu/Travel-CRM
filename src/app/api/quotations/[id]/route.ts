@@ -6,7 +6,6 @@ import { QUOTATION_STATUSES } from "@/lib/constants";
 
 const schema = z.object({
   status: z.enum(QUOTATION_STATUSES).optional(),
-  agencyCost: z.coerce.number().nonnegative().optional(),
 });
 
 export async function PATCH(req: NextRequest, ctx: RouteContext<"/api/quotations/[id]">) {

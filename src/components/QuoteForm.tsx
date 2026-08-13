@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { QUOTATION_ITEM_CATEGORIES } from "@/lib/constants";
+import { QUOTATION_ITEM_CATEGORIES, CURRENCIES, DEFAULT_CURRENCY } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 
 type Item = {
@@ -27,9 +27,7 @@ export function QuoteForm({
 }) {
   const router = useRouter();
   const [items, setItems] = useState<Item[]>([emptyItem()]);
-  const [currency, setCurrency] = useState("USD");
-  const [taxRate, setTaxRate] = useState("0");
-  const [agencyCost, setAgencyCost] = useState("");
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
   const [validUntil, setValidUntil] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,9 +39,7 @@ export function QuoteForm({
   }
 
   const subtotal = items.reduce((s, i) => s + (Number(i.quantity) || 0) * (Number(i.unitPrice) || 0), 0);
-  const tax = subtotal * (Number(taxRate) || 0);
-  const total = subtotal + tax;
-  const margin = agencyCost ? total - Number(agencyCost) : null;
+  const total = subtotal;
 
   function buildSummaryText(quotationTotal: number, quotationId: string) {
     const lines = items
@@ -72,8 +68,6 @@ export function QuoteForm({
       body: JSON.stringify({
         leadId,
         currency,
-        taxRate: Number(taxRate) || 0,
-        agencyCost: agencyCost || undefined,
         validUntil: validUntil || undefined,
         markSent,
         items: items
@@ -167,34 +161,16 @@ export function QuoteForm({
         </button>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="mb-1 block text-xs font-medium text-stone-600">Currency</label>
-          <input value={currency} onChange={(e) => setCurrency(e.target.value)} className={`w-full ${INPUT_CLASS}`} />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs font-medium text-stone-600">Tax rate (0-1)</label>
-          <input
-            type="number"
-            min={0}
-            max={1}
-            step="0.01"
-            value={taxRate}
-            onChange={(e) => setTaxRate(e.target.value)}
-            className={`w-full ${INPUT_CLASS}`}
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs font-medium text-stone-600">Agency cost</label>
-          <input
-            type="number"
-            min={0}
-            step="0.01"
-            placeholder="optional"
-            value={agencyCost}
-            onChange={(e) => setAgencyCost(e.target.value)}
-            className={`w-full ${INPUT_CLASS}`}
-          />
+          <select value={currency} onChange={(e) => setCurrency(e.target.value)} className={`w-full ${INPUT_CLASS}`}>
+            {CURRENCIES.map(([code, name]) => (
+              <option key={code} value={code}>
+                {code} — {name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-stone-600">Valid until</label>
@@ -214,26 +190,12 @@ export function QuoteForm({
             {currency} {subtotal.toLocaleString()}
           </span>
         </div>
-        <div className="flex justify-between text-stone-600">
-          <span>Tax</span>
-          <span>
-            {currency} {tax.toLocaleString()}
-          </span>
-        </div>
         <div className="mt-1 flex justify-between border-t border-stone-200 pt-1 font-semibold text-stone-900">
           <span>Total</span>
           <span>
             {currency} {total.toLocaleString()}
           </span>
         </div>
-        {margin !== null && (
-          <div className="mt-1 flex justify-between text-xs text-emerald-600">
-            <span>Margin</span>
-            <span>
-              {currency} {margin.toLocaleString()}
-            </span>
-          </div>
-        )}
       </div>
 
       <div className="space-y-1.5">

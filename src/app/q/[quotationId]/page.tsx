@@ -78,14 +78,6 @@ export default async function PublicQuotePage(props: PageProps<"/q/[quotationId]
                   {quotation.currency} {quotation.subtotal.toLocaleString()}
                 </span>
               </div>
-              {quotation.tax > 0 && (
-                <div className="flex justify-between text-stone-500">
-                  <span>Tax</span>
-                  <span>
-                    {quotation.currency} {quotation.tax.toLocaleString()}
-                  </span>
-                </div>
-              )}
               <div className="flex justify-between pt-1 text-base font-semibold text-stone-900">
                 <span>Total</span>
                 <span>

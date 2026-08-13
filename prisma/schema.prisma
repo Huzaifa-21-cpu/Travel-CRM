@@ -178,12 +178,9 @@ model Quotation {
   agentId     String?
   agent       User?    @relation(fields: [agentId], references: [id])
   version     Int      @default(1)
-  currency    String   @default("USD")
+  currency    String   @default("OMR")
   subtotal    Float    @default(0)
-  tax         Float    @default(0)
   total       Float    @default(0)
-  // What this itinerary costs the agency — lets the UI show margin (total - agencyCost).
-  agencyCost  Float?
   status      String   @default("DRAFT")
   validUntil  DateTime?
   createdAt   DateTime @default(now())

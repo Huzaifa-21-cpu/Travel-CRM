@@ -14,9 +14,7 @@ const itemSchema = z.object({
 
 const schema = z.object({
   leadId: z.string().min(1),
-  currency: z.string().default("USD"),
-  taxRate: z.coerce.number().min(0).max(1).default(0),
-  agencyCost: z.coerce.number().nonnegative().optional(),
+  currency: z.string().default("OMR"),
   validUntil: z.string().optional(),
   // Whether this quote is being sent to the customer right away — if so, we mark
   // it SENT (not DRAFT) and auto-schedule a 3-touch follow-up sequence so the
@@ -39,8 +37,7 @@ export async function POST(req: NextRequest) {
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
   const subtotal = d.items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0);
-  const tax = subtotal * d.taxRate;
-  const total = subtotal + tax;
+  const total = subtotal;
 
   const previousCount = await prisma.quotation.count({ where: { leadId: d.leadId } });
 
@@ -51,9 +48,7 @@ export async function POST(req: NextRequest) {
       version: previousCount + 1,
       currency: d.currency,
       subtotal,
-      tax,
       total,
-      agencyCost: d.agencyCost,
       validUntil: d.validUntil ? new Date(d.validUntil) : undefined,
       status: d.markSent ? "SENT" : "DRAFT",
       items: {

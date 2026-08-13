@@ -98,15 +98,7 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
                 <p className="font-medium text-stone-900">
                   v{q.version} · {q.currency} {q.total.toLocaleString()}
                 </p>
-                <p className="text-xs text-stone-400">
-                  {q.items.length} items
-                  {q.agencyCost != null && (
-                    <span className="text-emerald-600">
-                      {" "}
-                      · margin {q.currency} {(q.total - q.agencyCost).toLocaleString()}
-                    </span>
-                  )}
-                </p>
+                <p className="text-xs text-stone-400">{q.items.length} items</p>
               </div>
               <div className="flex items-center gap-2">
                 <a
