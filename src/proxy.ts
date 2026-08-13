@@ -3,7 +3,15 @@ import { jwtVerify } from "jose";
 
 const SESSION_COOKIE = "travelcrm_session";
 // /q/ is the customer-facing shareable quote link — unguessable cuid, no login.
-const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/webhooks/whatsapp", "/q"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/api/auth/login",
+  "/api/auth/signup",
+  "/api/webhooks/whatsapp",
+  "/api/webhooks/stripe",
+  "/q",
+];
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;

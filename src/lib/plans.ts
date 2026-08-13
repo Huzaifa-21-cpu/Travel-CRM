@@ -31,6 +31,11 @@ export function getPlan(id: string) {
   return PLANS.find((p) => p.id === id);
 }
 
+/** Resolves a Stripe price ID (from a webhook event) back to our plan, via each plan's configured env var. */
+export function getPlanByPriceId(priceId: string) {
+  return PLANS.find((p) => process.env[p.priceEnvVar] === priceId);
+}
+
 export const TRIAL_DAYS = 14;
 
 /** Statuses that should be treated as "has access" — everything else is blocked/warned. */

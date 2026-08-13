@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Plane, MessageCircle, KanbanSquare, BellRing } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { TRIAL_DAYS } from "@/lib/plans";
 
 const FEATURES = [
   { icon: MessageCircle, text: "Every WhatsApp inquiry lands in one shared inbox" },
@@ -14,23 +15,40 @@ const FEATURES = [
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type FieldErrors = { email?: string; password?: string };
+type FieldErrors = {
+  agencyName?: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+};
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("owner@demoagency.com");
-  const [password, setPassword] = useState("password123");
+  const [agencyName, setAgencyName] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
 
   function validate(): FieldErrors {
     const errors: FieldErrors = {};
+    if (!agencyName.trim()) errors.agencyName = "Agency name is required";
+    if (!name.trim()) errors.name = "Your name is required";
     const trimmedEmail = email.trim();
     if (!trimmedEmail) errors.email = "Email is required";
     else if (!EMAIL_PATTERN.test(trimmedEmail)) errors.email = "Enter a valid email address";
     if (!password) errors.password = "Password is required";
+    else if (password.length < 8) errors.password = "Use at least 8 characters";
+    if (confirmPassword !== password) errors.confirmPassword = "Passwords don't match";
     return errors;
+  }
+
+  function clearFieldError(field: keyof FieldErrors) {
+    setFieldErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -41,20 +59,27 @@ export default function LoginPage() {
     if (Object.keys(errors).length > 0) return;
 
     setLoading(true);
-    const res = await fetch("/api/auth/login", {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), password }),
+      body: JSON.stringify({ agencyName: agencyName.trim(), name: name.trim(), email: email.trim(), password }),
     });
     setLoading(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Login failed");
+      setError(data.error ?? "Couldn't create your account");
       return;
     }
     router.push("/inbox");
     router.refresh();
   }
+
+  const inputClass = (hasError: boolean) =>
+    `mb-1 w-full rounded-lg border px-3 py-2.5 text-sm transition-shadow focus:outline-none focus:ring-2 ${
+      hasError
+        ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
+        : "border-stone-300 focus:border-teal-500 focus:ring-teal-500/20"
+    }`;
 
   return (
     <div className="flex min-h-screen">
@@ -76,11 +101,10 @@ export default function LoginPage() {
 
         <div className="relative max-w-md">
           <h1 className="text-3xl font-semibold leading-tight tracking-tight">
-            Stop losing WhatsApp travel leads.
+            Start your {TRIAL_DAYS}-day free trial.
           </h1>
           <p className="mt-3 text-sm text-teal-50/90">
-            Every inquiry, quote, and booking in one place — built for the way travel agencies
-            actually work on WhatsApp.
+            Set up your agency workspace in under a minute — no card required to start.
           </p>
           <ul className="mt-8 space-y-3">
             {FEATURES.map(({ icon: Icon, text }) => (
@@ -99,21 +123,47 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <div className="flex w-full flex-col items-center justify-center bg-white px-6 lg:w-1/2">
+      <div className="flex w-full flex-col items-center justify-center bg-white px-6 py-10 lg:w-1/2">
         <form onSubmit={handleSubmit} noValidate className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
             <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600">
               <Plane size={18} className="-rotate-45 text-white" strokeWidth={2.5} />
             </span>
           </div>
-          <h2 className="text-xl font-semibold text-stone-900">Welcome back</h2>
-          <p className="mb-6 text-sm text-stone-500">Sign in to your agency workspace</p>
+          <h2 className="text-xl font-semibold text-stone-900">Create your workspace</h2>
+          <p className="mb-6 text-sm text-stone-500">{TRIAL_DAYS} days free, no credit card needed</p>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">
-              {error}
-            </div>
+            <div className="mb-4 rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>
           )}
+
+          <label className="mb-1 block text-sm font-medium text-stone-700">Agency name</label>
+          <input
+            type="text"
+            value={agencyName}
+            onChange={(e) => {
+              setAgencyName(e.target.value);
+              clearFieldError("agencyName");
+            }}
+            placeholder="Wanderlust Travels"
+            aria-invalid={Boolean(fieldErrors.agencyName)}
+            className={inputClass(Boolean(fieldErrors.agencyName))}
+          />
+          <p className="mb-3 min-h-[1rem] text-xs text-rose-600">{fieldErrors.agencyName}</p>
+
+          <label className="mb-1 block text-sm font-medium text-stone-700">Your name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              clearFieldError("name");
+            }}
+            placeholder="Amina Yusuf"
+            aria-invalid={Boolean(fieldErrors.name)}
+            className={inputClass(Boolean(fieldErrors.name))}
+          />
+          <p className="mb-3 min-h-[1rem] text-xs text-rose-600">{fieldErrors.name}</p>
 
           <label className="mb-1 block text-sm font-medium text-stone-700">Email</label>
           <input
@@ -121,14 +171,10 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: undefined }));
+              clearFieldError("email");
             }}
             aria-invalid={Boolean(fieldErrors.email)}
-            className={`mb-1 w-full rounded-lg border px-3 py-2.5 text-sm transition-shadow focus:outline-none focus:ring-2 ${
-              fieldErrors.email
-                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
-                : "border-stone-300 focus:border-teal-500 focus:ring-teal-500/20"
-            }`}
+            className={inputClass(Boolean(fieldErrors.email))}
           />
           <p className="mb-3 min-h-[1rem] text-xs text-rose-600">{fieldErrors.email}</p>
 
@@ -138,29 +184,35 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
-              if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: undefined }));
+              clearFieldError("password");
             }}
             aria-invalid={Boolean(fieldErrors.password)}
-            className={`mb-1 w-full rounded-lg border px-3 py-2.5 text-sm transition-shadow focus:outline-none focus:ring-2 ${
-              fieldErrors.password
-                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/20"
-                : "border-stone-300 focus:border-teal-500 focus:ring-teal-500/20"
-            }`}
+            className={inputClass(Boolean(fieldErrors.password))}
           />
-          <p className="mb-5 min-h-[1rem] text-xs text-rose-600">{fieldErrors.password}</p>
+          <p className="mb-3 min-h-[1rem] text-xs text-rose-600">{fieldErrors.password}</p>
+
+          <label className="mb-1 block text-sm font-medium text-stone-700">Confirm password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              clearFieldError("confirmPassword");
+            }}
+            aria-invalid={Boolean(fieldErrors.confirmPassword)}
+            className={inputClass(Boolean(fieldErrors.confirmPassword))}
+          />
+          <p className="mb-5 min-h-[1rem] text-xs text-rose-600">{fieldErrors.confirmPassword}</p>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Creating workspace..." : "Start free trial"}
           </Button>
 
           <p className="mt-4 text-center text-xs text-stone-400">
-            New agency?{" "}
-            <Link href="/signup" className="font-medium text-teal-700 hover:underline">
-              Start a free trial
+            Already have an account?{" "}
+            <Link href="/login" className="font-medium text-teal-700 hover:underline">
+              Sign in
             </Link>
-          </p>
-          <p className="mt-2 text-center text-xs text-stone-300">
-            Demo seed login: owner@demoagency.com / password123
           </p>
         </form>
       </div>
