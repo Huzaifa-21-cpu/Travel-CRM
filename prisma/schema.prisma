@@ -23,13 +23,13 @@ model Agency {
   aiKnowledgeBase        String?
   createdAt              DateTime @default(now())
 
-  // Billing (Stripe)
-  plan                 String    @default("TRIAL")
-  subscriptionStatus   String    @default("trialing")
-  trialEndsAt          DateTime?
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  currentPeriodEnd     DateTime?
+  // Billing (Tap Payments) — Tap has no native subscription object, so plan
+  // period is tracked manually and extended by a fresh charge on renewal.
+  plan               String    @default("TRIAL")
+  subscriptionStatus String    @default("trialing")
+  trialEndsAt        DateTime?
+  tapCustomerId      String?   @unique
+  currentPeriodEnd   DateTime?
 
   users      User[]
   customers  Customer[]

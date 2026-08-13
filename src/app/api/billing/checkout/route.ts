@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getStripe, isStripeConfigured, getAppUrl } from "@/lib/stripe";
+import { isTapConfigured, tapRequest, getAppUrl } from "@/lib/tap";
 import { getPlan } from "@/lib/plans";
 
 const schema = z.object({ planId: z.string() });
 
 export async function POST(req: NextRequest) {
-  if (!isStripeConfigured()) {
+  if (!isTapConfigured()) {
     return NextResponse.json({ error: "Billing isn't configured yet" }, { status: 503 });
   }
 
@@ -24,8 +24,7 @@ export async function POST(req: NextRequest) {
   }
 
   const plan = getPlan(parsed.data.planId);
-  const priceId = plan && process.env[plan.priceEnvVar];
-  if (!plan || !priceId) {
+  if (!plan) {
     return NextResponse.json({ error: "That plan isn't available" }, { status: 400 });
   }
 
@@ -34,20 +33,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Agency not found" }, { status: 404 });
   }
 
-  const stripe = getStripe();
   const appUrl = getAppUrl();
+  const [firstName, ...restName] = user.name.trim().split(/\s+/);
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer: agency.stripeCustomerId ?? undefined,
-    customer_email: agency.stripeCustomerId ? undefined : user.email,
-    client_reference_id: agency.id,
-    line_items: [{ price: priceId, quantity: 1 }],
-    metadata: { agencyId: agency.id, planId: plan.id },
-    subscription_data: { metadata: { agencyId: agency.id, planId: plan.id } },
-    success_url: `${appUrl}/settings?billing=success`,
-    cancel_url: `${appUrl}/settings?billing=cancelled`,
+  // source.id "src_all" hands the entire card-collection page to Tap's hosted
+  // checkout — we never touch card data, so this stays out of PCI scope.
+  const charge = await tapRequest("/charges", {
+    amount: plan.price,
+    currency: "USD",
+    customer: {
+      first_name: firstName || user.name,
+      last_name: restName.join(" ") || firstName || user.name,
+      email: user.email,
+    },
+    source: { id: "src_all" },
+    description: `${plan.name} plan — ${agency.name}`,
+    reference: { order: `${agency.id}:${plan.id}` },
+    redirect: { url: `${appUrl}/settings?billing=success` },
+    post: { url: `${appUrl}/api/webhooks/tap` },
   });
 
-  return NextResponse.json({ url: session.url });
+  if (!charge.transaction?.url) {
+    return NextResponse.json({ error: "Tap didn't return a payment link" }, { status: 502 });
+  }
+
+  return NextResponse.json({ url: charge.transaction.url });
 }

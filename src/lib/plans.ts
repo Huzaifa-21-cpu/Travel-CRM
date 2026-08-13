@@ -3,7 +3,6 @@ export const PLANS = [
     id: "STARTER",
     name: "Starter",
     price: 49,
-    priceEnvVar: "STRIPE_PRICE_STARTER",
     description: "For a single agent getting off spreadsheets",
     features: ["1 agent seat", "WhatsApp inbox & pipeline", "Quotes & booking tracking", "Passport/visa reminders"],
   },
@@ -11,7 +10,6 @@ export const PLANS = [
     id: "GROWTH",
     name: "Growth",
     price: 99,
-    priceEnvVar: "STRIPE_PRICE_GROWTH",
     description: "For a small team with multiple agents",
     features: ["Up to 5 agent seats", "Everything in Starter", "AI reply drafting", "Agent performance dashboard"],
   },
@@ -19,7 +17,6 @@ export const PLANS = [
     id: "PRO",
     name: "Pro",
     price: 199,
-    priceEnvVar: "STRIPE_PRICE_PRO",
     description: "For agencies running high WhatsApp volume",
     features: ["Unlimited agent seats", "Everything in Growth", "Priority support"],
   },
@@ -31,12 +28,10 @@ export function getPlan(id: string) {
   return PLANS.find((p) => p.id === id);
 }
 
-/** Resolves a Stripe price ID (from a webhook event) back to our plan, via each plan's configured env var. */
-export function getPlanByPriceId(priceId: string) {
-  return PLANS.find((p) => process.env[p.priceEnvVar] === priceId);
-}
-
 export const TRIAL_DAYS = 14;
 
 /** Statuses that should be treated as "has access" — everything else is blocked/warned. */
 export const ACTIVE_STATUSES = new Set(["trialing", "active"]);
+
+/** How long a paid plan stays active after a successful charge, since Tap has no auto-renewing subscription. */
+export const BILLING_PERIOD_DAYS = 30;

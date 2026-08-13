@@ -8,7 +8,7 @@ type Props = {
   currentPlan: string;
   subscriptionStatus: string;
   trialEndsAt: string | null;
-  hasStripeCustomer: boolean;
+  currentPeriodEnd: string | null;
   isOwner: boolean;
 };
 
@@ -28,8 +28,12 @@ const STATUS_TONES: Record<string, string> = {
   unpaid: "bg-rose-50 text-rose-700",
 };
 
-export function BillingSection({ currentPlan, subscriptionStatus, trialEndsAt, hasStripeCustomer, isOwner }: Props) {
-  const [loadingPlan, setLoadingPlan] = useState<PlanId | "portal" | null>(null);
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+export function BillingSection({ currentPlan, subscriptionStatus, trialEndsAt, currentPeriodEnd, isOwner }: Props) {
+  const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function startCheckout(planId: PlanId) {
@@ -49,36 +53,19 @@ export function BillingSection({ currentPlan, subscriptionStatus, trialEndsAt, h
     window.location.href = data.url;
   }
 
-  async function openPortal() {
-    setError(null);
-    setLoadingPlan("portal");
-    const res = await fetch("/api/billing/portal", { method: "POST" });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.url) {
-      setError(data.error ?? "Couldn't open the billing portal");
-      setLoadingPlan(null);
-      return;
-    }
-    window.location.href = data.url;
-  }
-
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_TONES[subscriptionStatus] ?? "bg-stone-100 text-stone-600"}`}>
-            {STATUS_LABELS[subscriptionStatus] ?? subscriptionStatus}
+      <div className="mb-4">
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_TONES[subscriptionStatus] ?? "bg-stone-100 text-stone-600"}`}>
+          {STATUS_LABELS[subscriptionStatus] ?? subscriptionStatus}
+        </span>
+        {subscriptionStatus === "trialing" && trialEndsAt && (
+          <span className="ml-2 text-xs text-stone-500">Trial ends {formatDate(trialEndsAt)}</span>
+        )}
+        {subscriptionStatus === "active" && currentPeriodEnd && (
+          <span className="ml-2 text-xs text-stone-500">
+            Paid through {formatDate(currentPeriodEnd)} — renew below before then, Tap doesn&apos;t auto-charge
           </span>
-          {subscriptionStatus === "trialing" && trialEndsAt && (
-            <span className="ml-2 text-xs text-stone-500">
-              Trial ends {new Date(trialEndsAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
-            </span>
-          )}
-        </div>
-        {hasStripeCustomer && isOwner && (
-          <Button variant="secondary" size="sm" onClick={openPortal} disabled={loadingPlan !== null}>
-            {loadingPlan === "portal" ? "Opening..." : "Manage subscription"}
-          </Button>
         )}
       </div>
 
@@ -108,10 +95,10 @@ export function BillingSection({ currentPlan, subscriptionStatus, trialEndsAt, h
                   size="sm"
                   variant={isCurrent ? "secondary" : "primary"}
                   className="mt-4"
-                  disabled={isCurrent || loadingPlan !== null}
+                  disabled={loadingPlan !== null}
                   onClick={() => startCheckout(plan.id)}
                 >
-                  {isCurrent ? "Current plan" : loadingPlan === plan.id ? "Redirecting..." : "Choose plan"}
+                  {loadingPlan === plan.id ? "Redirecting..." : isCurrent ? "Renew" : "Choose plan"}
                 </Button>
               ) : (
                 <p className="mt-4 text-xs text-stone-400">Ask your agency owner to change plans</p>
